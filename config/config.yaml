@@ -1,0 +1,3 @@
+data_ingestion:
+  token_URL: https://auth.greenyellow.com/realms/gy-prod/protocol/openid-connect/token
+  
