@@ -6,3 +6,9 @@ from pathlib import Path
 class DataIngestionConfig:
     token_URL: str
     
+
+@dataclass(frozen=True)
+class BaseModelConfig:
+    params_time_margin: float
+    params_date_margin: float
+    params_hours_margin: float

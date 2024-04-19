@@ -2,7 +2,8 @@ from anomalyDetector.constants import *
 import os
 from pathlib import Path
 from anomalyDetector.utils.common import read_yaml
-from anomalyDetector.entity.config_entity import (DataIngestionConfig)
+from anomalyDetector.entity.config_entity import (DataIngestionConfig,
+                                                  BaseModelConfig)
 
 
 class ConfigurationManager:
@@ -24,4 +25,16 @@ class ConfigurationManager:
             token_URL=config.token_URL
         )
 
-        return data_ingestion_config    
+        return data_ingestion_config  
+
+
+    def get_base_model_config(self) -> BaseModelConfig:
+        
+
+        base_model_config = BaseModelConfig(
+            params_time_margin=self.params.TIME_MARGIN,
+            params_date_margin=self.params.DATE_MARGIN,
+            params_hours_margin=self.params.HOURS_MARGIN
+        )
+
+        return base_model_config    
