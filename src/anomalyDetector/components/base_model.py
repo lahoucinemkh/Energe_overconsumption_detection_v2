@@ -6,13 +6,14 @@ from anomalyDetector.db.db import session
 from pandas import ExcelWriter
 import xlsxwriter
 from pandas import ExcelFile
-from anomalyDetector.db.models import Meter, Site
+from anomalyDetector.db.models import Meter, Site, Anomaly
 from datetime import datetime, timedelta
 from anomalyDetector.utils.common import TimeMarginClustering, create_cluster_dataframe, custom_clustering, meme_semaine, arrondir_multiple_de_5
 from anomalyDetector.entity.config_entity import BaseModelConfig
 
 class BaseModel:
-    def __init__(self, start, end, site_code, closing_hour_week, opening_hour_week, threshold, margin, closing_hour_sun, opening_hour_sun, config: BaseModelConfig):
+    def __init__(self, id, start, end, site_code, closing_hour_week, opening_hour_week, threshold, margin, closing_hour_sun, opening_hour_sun, config: BaseModelConfig):
+        self.id = id
         self.config = config
         self.start = start
         self.end = end 
@@ -42,7 +43,7 @@ class BaseModel:
         Marge_list=[]
         startt_list = []
 
-
+        id = self.id  
         code = self.site_code    
         # Définition des heures d'ouverture et de fermeture de l'entreprise
         heure_ouverture = self.opening_hour_week
@@ -58,7 +59,7 @@ class BaseModel:
         start = self.start
         end = self.end
 
-        if closing_hour_sun == datetime.strptime('00:00:00', '%H:%M:%S'):
+        if closing_hour_sun == datetime.strptime('00:00:00', '%H:%M:%S').time():
             closing_hour_sun = heure_fermeture
             opening_hour_sun = heure_ouverture
 
@@ -75,7 +76,7 @@ class BaseModel:
         df_sem = df1[df1['date_time'].dt.dayofweek != 6]
 
             # Filtrer les données pour les heures en dehors des heures d'ouverture de l'entreprise
-        if heure_fermeture in [0, 1, 2]:
+        if heure_fermeture.hour in [0, 1, 2]:
             donnees_filtrees_sem = df_sem[(df_sem['date_time'].dt.time > heure_fermeture) & (df_sem['date_time'].dt.time <= heure_ouverture)]
             #donnees_filtrees = df[(df['date_time'].apply(lambda x: x.hour) > heure_fermeture.hour) & (df['date_time'].apply(lambda x: x.hour) <= heure_ouverture.hour)]
         else:
@@ -83,7 +84,7 @@ class BaseModel:
             #donnees_filtrees = df[(df['date_time'].apply(lambda x: x.hour) > heure_fermeture.hour) | (df['date_time'].apply(lambda x: x.hour) <= heure_ouverture.hour)]
 
         # Filtrer les données pour les heures en dehors des heures d'ouverture de l'entreprise
-        if closing_hour_sun in [0, 1, 2]:
+        if closing_hour_sun.hour in [0, 1, 2]:
             donnees_filtrees_dim = df_dim[(df_dim['date_time'].dt.time > closing_hour_sun) & (df_dim['date_time'].dt.time <= opening_hour_sun)]
             #donnees_filtrees = df[(df['date_time'].apply(lambda x: x.hour) > heure_fermeture.hour) & (df['date_time'].apply(lambda x: x.hour) <= heure_ouverture.hour)]
         else:
@@ -128,7 +129,7 @@ class BaseModel:
 
 
             # Combiner les données de la nuit actuelle et de la nuit suivante
-            if heure_fermeture_1 in [0, 1, 2]:
+            if heure_fermeture_1.hour in [0, 1, 2]:
                 heures_date = heures_nuit_suivante
             else:
                 heures_date = pd.concat([heures_nuit, heures_nuit_suivante])
@@ -290,7 +291,7 @@ class BaseModel:
         start = self.start
         end = self.end
 
-        if closing_hour_sun == datetime.strptime('00:00:00', '%H:%M:%S'):
+        if closing_hour_sun == datetime.strptime('00:00:00', '%H:%M:%S').time():
             closing_hour_sun = heure_fermeture
             opening_hour_sun = heure_ouverture
 
@@ -392,7 +393,7 @@ class BaseModel:
                     #date2 = datetime.datetime.strptime(date_string, '%Y-%m-%d').date()
                     dDate2_list.append(date1)
                     dheurev_list.append(heure_ouverture)
-                    dNbrHeure_list.append(row['Nombre d\'heures regroupées']/6)
+                    dNbrHeure_list.append("{:.2f}".format(row['Nombre d\'heures regroupées']/6))
                     ddefrence_list.append(int(row['real_consumption']-talon_consommation))
                     dsurconso_identifie.append((int(row['real_consumption'])))
                     surconso = row['Nombre d\'heures regroupées'] * int(row['real_consumption']-talon_consommation)
@@ -409,13 +410,57 @@ class BaseModel:
 
         df_dimOut = pd.DataFrame({'Code':dCode_list, 'Energie': dEnergie,'heure ouverture':dheurev_list,'heure fermetur':dheuref_list, 'TalonRef':dTalonRef_list, 'Début surconsommation':dDate1_list, 'Fin surconsommation':dDate2_list, 'Talon surconso identifie':dsurconso_identifie, 'impact':ddefrence_list,'NbrHeures':dNbrHeure_list, 'NbrNuits':dNbrNuit, 'Impact conso (kWh)':Impact_conso, '% Surconso':perSurconso, "Période d'alerte":Periode, 'Start_time':dstartt_list})
 
+        for index, row in df_Fusion.iterrows():
+            anomaly_instance = Anomaly(
+                site_id=id,
+                start_date=row['Début surconsommation'],
+                end_date=row['Fin surconsommation'],
+                consumption_value=row['Talon surconso identifie'],
+                nbr_hour_consumption=row['NbrHeures'],
+                nbr_days_consumption=row['NbrNuits'],
+                start_time=row['Start_time'],
+                impact_consumption=row['Impact conso (kWh)'],
+                period_type=row["Période d'alerte"]
+            )
+
+            # add to the session instance
+            session.add(anomaly_instance)
+
+        # Commit the changes to the db
+        session.commit()
+
+        for index, row in df_dimOut.iterrows():
+            anomaly_instance = Anomaly(
+                site_id=id,
+                start_date=row['Début surconsommation'],
+                end_date=row['Fin surconsommation'],
+                consumption_value=row['Talon surconso identifie'],
+                nbr_hour_consumption=row['NbrHeures'],
+                nbr_days_consumption=row['NbrNuits'],
+                start_time=row['Start_time'],
+                impact_consumption=row['Impact conso (kWh)'],
+                period_type=row["Période d'alerte"]
+            )
+
+            # add to the session instance
+            session.add(anomaly_instance)
+
+        # Commit the changes to the db
+        session.commit()
+
+
+        # close the session
+        session.close()
+        
         writer = pd.ExcelWriter(f'{code}.xlsx', engine='xlsxwriter')
 
         df_dimOut.to_excel(writer, sheet_name='dim', index=False)
         df_Fusion.to_excel(writer, sheet_name='Nuit', index=False)
 
         #writer.save()
-        writer.close()               
+        writer.close()
+
+
            
 
 

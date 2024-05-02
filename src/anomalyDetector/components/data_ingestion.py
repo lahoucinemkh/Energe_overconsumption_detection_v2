@@ -206,7 +206,7 @@ class DataIngestion:
                 site_id=row['site_id'],
                 site_code=row['site_code'],
                 energy_source=row['energy_source'],
-            date_time=row['date_time'],
+                date_time=row['date_time'],
                 real_consumption=row['real_consumption'],
                 temperature=row['temperature'],
                 nbmeter=row['nb_meter']

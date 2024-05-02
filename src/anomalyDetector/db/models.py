@@ -1,6 +1,14 @@
 from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey, Time, Date
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.ext.declarative import declared_attr
+from anomalyDetector import bcrypt, login_manager
+from flask_login import UserMixin
+from anomalyDetector.db.db import session
+
+
+@login_manager.user_loader
+def load_user(user_id):
+    return session.query(User).get(int(user_id))
 
 Base = declarative_base()
 
@@ -72,3 +80,23 @@ class Categorization(Base):
     justification = Column(String)
 
     anomaly = relationship('Anomaly', back_populates='categorization')
+
+class User(Base, UserMixin):
+    __tablename__ = 'user_table'
+
+    id = Column(Integer, primary_key=True)
+    username = Column(String(length=30), nullable=False, unique=True)
+    email_address = Column(String(length=50), nullable=False, unique=True)
+    password_hash = Column(String(length=60), nullable=False)
+
+    @property
+    def password(self):
+        return self.password
+
+    @password.setter
+    def password(self, plain_text_password):
+        self.password_hash = bcrypt.generate_password_hash(plain_text_password).decode('utf-8')
+
+    def check_password_correction(self, attempted_password):
+        return bcrypt.check_password_hash(self.password_hash, attempted_password)    
+   
