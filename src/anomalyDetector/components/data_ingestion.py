@@ -224,4 +224,6 @@ class DataIngestion:
         print('Sites introuvables sur Easyvision :')
         print(noDataList)
 
+        return noDataList
+
 
