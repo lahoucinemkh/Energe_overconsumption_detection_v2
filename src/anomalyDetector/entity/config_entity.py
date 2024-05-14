@@ -12,3 +12,7 @@ class BaseModelConfig:
     params_time_margin: float
     params_date_margin: float
     params_hours_margin: float
+
+@dataclass(frozen=True)
+class DataAvailabilityConfig:
+    root_dir: Path    

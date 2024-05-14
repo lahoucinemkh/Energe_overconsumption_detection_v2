@@ -2,20 +2,24 @@ from datetime import datetime, timedelta
 from anomalyDetector.db.db import session
 import pandas as pd
 from anomalyDetector.db.models import Meter, Site
+from anomalyDetector.entity.config_entity import DataAvailabilityConfig
+from pathlib import Path
 
 class DataAvailability:
-    def __init__(self, start, end):
+    def __init__(self, start, end, config: DataAvailabilityConfig):
         self.start = start
         self.end = end
+        self.config = config
 
     def check_AVAILABILITY(self):
 
 
         start = self.start
         end = self.end
+        directory = self.config.root_dir
 
-        start_date = datetime(start)
-        end_date = datetime(end)
+        start_date = datetime.combine(start, datetime.min.time())
+        end_date = datetime.combine(end, datetime.min.time())
 
         
         date_range = [start_date + timedelta(minutes=10*x) for x in range(int((end_date - start_date).total_seconds() / 600) + 1)]
@@ -50,6 +54,6 @@ class DataAvailability:
     
         if anomalies:
             anomalies_df = pd.concat(anomalies)
-            file_name = f"missing_data_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}.xlsx"
+            file_name = f"{directory}/missing_data_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}.xlsx"
             anomalies_df.to_excel(file_name, index=False)
 

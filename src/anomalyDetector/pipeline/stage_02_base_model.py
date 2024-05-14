@@ -3,7 +3,7 @@ from anomalyDetector.components.base_model import BaseModel
 from anomalyDetector import logger
 
 
-STAGE_NAME = "base model"
+STAGE_NAME = "base model stage"
 
 class BaseModelTrainingPipeline:
     def __init__(self, id, start, end, site_code, closing_hour_week, opening_hour_week, threshold, margin, closing_hour_sun, opening_hour_sun):

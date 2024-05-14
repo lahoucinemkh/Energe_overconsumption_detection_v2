@@ -1,8 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, DateField
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
 from anomalyDetector.db.models import User
 from anomalyDetector.db.db import session
+
+
 
 
 class RegisterForm(FlaskForm):
@@ -26,4 +28,20 @@ class RegisterForm(FlaskForm):
 class LoginForm(FlaskForm):
     username = StringField(label='User Name:', validators=[DataRequired()])
     password = PasswordField(label='Password:', validators=[DataRequired()])
-    submit = SubmitField(label='Sign in')    
+    submit = SubmitField(label='Sign in') 
+
+
+class DataIngestionForm(FlaskForm):
+    start_date = DateField('Start at')
+    end_date = DateField('End at')
+    submit = SubmitField('Start data ingestion')
+
+class DataAvailabilityForm(FlaskForm):
+    start_date = DateField('Start at')
+    end_date = DateField('End at')
+    submit = SubmitField('Start checking data availability')
+
+class BaseModelForm(FlaskForm):
+    start_date = DateField('Start at')
+    end_date = DateField('End at')
+    submit = SubmitField('Start detecting anomalies')        

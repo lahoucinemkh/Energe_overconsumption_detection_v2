@@ -1,3 +1,10 @@
+artifacts_root: artifacts
+
 data_ingestion:
   token_URL: https://auth.greenyellow.com/realms/gy-prod/protocol/openid-connect/token
+
+
+data_availability:
+  root_dir: artifacts/data_availability
+
   

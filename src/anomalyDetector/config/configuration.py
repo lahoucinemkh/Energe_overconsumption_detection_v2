@@ -1,9 +1,10 @@
 from anomalyDetector.constants import *
 import os
 from pathlib import Path
-from anomalyDetector.utils.common import read_yaml
+from anomalyDetector.utils.common import read_yaml, create_directories
 from anomalyDetector.entity.config_entity import (DataIngestionConfig,
-                                                  BaseModelConfig)
+                                                  BaseModelConfig,
+                                                  DataAvailabilityConfig)
 
 
 class ConfigurationManager:
@@ -14,6 +15,8 @@ class ConfigurationManager:
 
         self.config = read_yaml(config_filepath)
         self.params = read_yaml(params_filepath)
+
+        create_directories([self.config.artifacts_root])
 
 
 
@@ -37,4 +40,16 @@ class ConfigurationManager:
             params_hours_margin=self.params.HOURS_MARGIN
         )
 
-        return base_model_config    
+        return base_model_config 
+
+
+    def get_data_availability_config(self) -> DataAvailabilityConfig:
+        config = self.config.data_availability
+
+        create_directories([config.root_dir])
+
+        data_availability_config = DataAvailabilityConfig(
+            root_dir=config.root_dir
+        )
+
+        return data_availability_config       

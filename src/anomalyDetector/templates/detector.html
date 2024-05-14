@@ -4,5 +4,57 @@
 {% endblock %}
 
 {% block content %}
-   here we will put the logique of our anomaly detector
+<body class="text-center">
+  <div class="container">
+      <form method="POST" class="form-signin" style="color:white">
+          {{ DataIngestion.hidden_tag() }}
+          <h1 class="h3 mb-3 font-weight-normal">
+              Data Ingestion
+          </h1>
+          <br>
+          {{ DataIngestion.start_date.label() }}
+          {{ DataIngestion.start_date(class="form-control", placeholder="Start date") }}
+
+          {{ DataIngestion.end_date.label() }}
+          {{ DataIngestion.end_date(class="form-control", placeholder="End date") }}
+
+
+          {{ DataIngestion.submit(class="btn btn-lg btn-block btn-primary") }}
+
+      </form>
+      <form method="POST" class="form-signin" style="color:white">
+        {{ DataAvailability.hidden_tag() }}
+        <h1 class="h3 mb-3 font-weight-normal">
+            Data Availability
+        </h1>
+        <br>
+        {{ DataAvailability.start_date.label() }}
+        {{ DataAvailability.start_date(class="form-control", placeholder="Start date") }}
+
+        {{ DataAvailability.end_date.label() }}
+        {{ DataAvailability.end_date(class="form-control", placeholder="End date") }}
+
+
+        {{ DataAvailability.submit(class="btn btn-lg btn-block btn-primary") }}
+
+      </form>
+      <form method="POST" class="form-signin" style="color:white">
+        {{ BaseModel.hidden_tag() }}
+        <h1 class="h3 mb-3 font-weight-normal">
+            Anomalies Detection
+        </h1>
+        <br>
+        {{ BaseModel.start_date.label() }}
+        {{ BaseModel.start_date(class="form-control", placeholder="Start date") }}
+
+        {{ BaseModel.end_date.label() }}
+        {{ BaseModel.end_date(class="form-control", placeholder="End date") }}
+
+
+        {{ BaseModel.submit(class="btn btn-lg btn-block btn-primary") }}
+
+      </form>
+  </div>
+</body>
+
 {% endblock %}
