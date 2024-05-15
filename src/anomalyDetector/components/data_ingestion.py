@@ -166,9 +166,7 @@ class DataIngestion:
                     'temperature': temperature_list,
                  })
 
-                # Affichage du DataFrame
-                #print(df.head(10))
-
+                
                  # sum the  two values of consumption
                 if len(Counter(df['meter_id']).keys())>1:
                     conso=df.groupby(['energy_source','date_time'])['real_consumption'].sum()
