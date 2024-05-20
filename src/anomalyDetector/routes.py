@@ -5,10 +5,11 @@ from datetime import datetime
 from anomalyDetector.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from anomalyDetector.pipeline.stage_02_base_model import BaseModelTrainingPipeline
 from anomalyDetector.pipeline.stage_03_data_availability import DataAvailabilityTrainingPipeline
-from anomalyDetector.db.models import User, Site
-from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm
+from anomalyDetector.db.models import User, Site, Anomaly
+from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm
 from anomalyDetector.db.db import session
 from flask_login import login_user, logout_user, login_required
+from sqlalchemy.orm.exc import NoResultFound
 
 
 @app.route('/')
@@ -182,4 +183,77 @@ def login_page():
 def logout_page():
     logout_user()
     flash("You have been logged out!", category='info')
-    return redirect(url_for("home_page"))    
+    return redirect(url_for("home_page"))   
+
+
+@app.route('/manage_anomalies', methods=['GET', 'POST'])
+#@login_required
+def manage_anomalies_page():
+    site_form = SiteSelectionForm()
+    anomaly_form = AnomalyEditForm()
+    
+    # Populate site codes for selection
+    sites = session.query(Site).all()
+    site_form.site_code.choices = [(site.id, site.site_code) for site in sites]
+
+    anomalies = []
+    
+    if site_form.validate_on_submit():
+        site_id = site_form.site_code.data
+        start_date = site_form.start_date.data
+        end_date = site_form.end_date.data
+
+        anomalies = session.query(Anomaly).filter(
+            Anomaly.site_id == site_id,
+            Anomaly.start_date >= start_date,
+            Anomaly.end_date <= end_date
+        ).all()
+    
+    if anomaly_form.validate_on_submit():
+        if anomaly_form.submit_edit.data:
+            anomaly_id = anomaly_form.id.data
+            try:
+                anomaly = session.query(Anomaly).filter(Anomaly.id == anomaly_id).one()
+                anomaly.start_date = anomaly_form.start_date.data
+                anomaly.end_date = anomaly_form.end_date.data
+                anomaly.consumption_value = anomaly_form.consumption_value.data
+                anomaly.nbr_hour_consumption = anomaly_form.nbr_hour_consumption.data
+                anomaly.nbr_days_consumption = anomaly_form.nbr_days_consumption.data
+                anomaly.start_time = anomaly_form.start_time.data
+                anomaly.impact_consumption = anomaly_form.impact_consumption.data
+                anomaly.period_type = anomaly_form.period_type.data
+                anomaly.comments = anomaly_form.comments.data
+                session.commit()
+                flash('Anomaly updated successfully!', 'success')
+            except NoResultFound:
+                flash('Anomaly not found!', 'danger')
+        elif anomaly_form.submit_delete.data:
+            anomaly_id = anomaly_form.id.data
+            try:
+                anomaly = session.query(Anomaly).filter(Anomaly.id == anomaly_id).one()
+                session.delete(anomaly)
+                session.commit()
+                flash('Anomaly deleted successfully!', 'success')
+            except NoResultFound:
+                flash('Anomaly not found!', 'danger')
+        elif anomaly_form.submit_add.data:
+            new_anomaly = Anomaly(
+                site_id=site_form.site_code.data,
+                start_date=anomaly_form.start_date.data,
+                end_date=anomaly_form.end_date.data,
+                consumption_value=anomaly_form.consumption_value.data,
+                nbr_hour_consumption=anomaly_form.nbr_hour_consumption.data,
+                nbr_days_consumption=anomaly_form.nbr_days_consumption.data,
+                start_time=anomaly_form.start_time.data,
+                impact_consumption=anomaly_form.impact_consumption.data,
+                period_type=anomaly_form.period_type.data,
+                comments=anomaly_form.comments.data
+            )
+            session.add(new_anomaly)
+            session.commit()
+            flash('Anomaly added successfully!', 'success')
+        elif anomaly_form.submit_validate.data:
+            # Handle validation logic if needed
+            pass
+
+    return render_template('manage_anomalies.html', site_form=site_form, anomaly_form=anomaly_form, anomalies=anomalies)     

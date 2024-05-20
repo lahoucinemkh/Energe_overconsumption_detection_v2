@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateField
+from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
 from anomalyDetector.db.models import User
 from anomalyDetector.db.db import session
+
 
 
 
@@ -44,4 +45,27 @@ class DataAvailabilityForm(FlaskForm):
 class BaseModelForm(FlaskForm):
     start_date = DateField('Start at')
     end_date = DateField('End at')
-    submit = SubmitField('Start detecting anomalies')        
+    submit = SubmitField('Start detecting anomalies')   
+
+
+class SiteSelectionForm(FlaskForm):
+    site_code = SelectField('Site Code', validators=[DataRequired()], coerce=int)
+    start_date = DateField('Start Date', validators=[DataRequired()])
+    end_date = DateField('End Date', validators=[DataRequired()])
+    submit = SubmitField('Apply')
+
+class AnomalyEditForm(FlaskForm):
+    id = StringField('ID')
+    start_date = DateField('Start Date', validators=[DataRequired()])
+    end_date = DateField('End Date', validators=[DataRequired()])
+    consumption_value = StringField('Consumption Value', validators=[DataRequired()])
+    nbr_hour_consumption = StringField('Number of Hours', validators=[DataRequired()])
+    nbr_days_consumption = StringField('Number of Days', validators=[DataRequired()])
+    start_time = StringField('Start Time', validators=[DataRequired()])
+    impact_consumption = StringField('Impact Consumption', validators=[DataRequired()])
+    period_type = StringField('Period Type', validators=[DataRequired()])
+    comments = StringField('Comments')
+    submit_edit = SubmitField('Edit')
+    submit_delete = SubmitField('Delete')
+    submit_add = SubmitField('Add')
+    submit_validate = SubmitField('Validate Changes')         

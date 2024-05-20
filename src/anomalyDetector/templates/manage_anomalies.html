@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block title %}
+  Manage Anomalies
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Manage Anomalies</h1>
+    
+    <form method="POST">
+        {{ site_form.hidden_tag() }}
+        <div class="form-group">
+            {{ site_form.site_code.label(class="form-label") }}
+            {{ site_form.site_code(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ site_form.start_date.label(class="form-label") }}
+            {{ site_form.start_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ site_form.end_date.label(class="form-label") }}
+            {{ site_form.end_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ site_form.submit(class="btn btn-primary") }}
+        </div>
+    </form>
+
+    {% if anomalies %}
+        <table class="table table-dark mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Consumption Value</th>
+                    <th>Number of Hours</th>
+                    <th>Number of Days</th>
+                    <th>Start Time</th>
+                    <th>Impact Consumption</th>
+                    <th>Period Type</th>
+                    <th>Comments</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for anomaly in anomalies %}
+                    <tr>
+                        <td>{{ anomaly.id }}</td>
+                        <td>{{ anomaly.start_date }}</td>
+                        <td>{{ anomaly.end_date }}</td>
+                        <td>{{ anomaly.consumption_value }}</td>
+                        <td>{{ anomaly.nbr_hour_consumption }}</td>
+                        <td>{{ anomaly.nbr_days_consumption }}</td>
+                        <td>{{ anomaly.start_time }}</td>
+                        <td>{{ anomaly.impact_consumption }}</td>
+                        <td>{{ anomaly.period_type }}</td>
+                        <td>{{ anomaly.comments }}</td>
+                        <td>
+                            <form method="POST" style="display:inline-block;">
+                                {{ anomaly_form.hidden_tag() }}
+                                {{ anomaly_form.id(value=anomaly.id) }}
+                                {{ anomaly_form.start_date(value=anomaly.start_date) }}
+                                {{ anomaly_form.end_date(value=anomaly.end_date) }}
+                                {{ anomaly_form.consumption_value(value=anomaly.consumption_value) }}
+                                {{ anomaly_form.nbr_hour_consumption(value=anomaly.nbr_hour_consumption) }}
+                                {{ anomaly_form.nbr_days_consumption(value=anomaly.nbr_days_consumption) }}
+                                {{ anomaly_form.start_time(value=anomaly.start_time) }}
+                                {{ anomaly_form.impact_consumption(value=anomaly.impact_consumption) }}
+                                {{ anomaly_form.period_type(value=anomaly.period_type) }}
+                                {{ anomaly_form.comments(value=anomaly.comments) }}
+                                {{ anomaly_form.submit_edit(class="btn btn-secondary") }}
+                                {{ anomaly_form.submit_delete(class="btn btn-danger") }}
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+    
+    <form method="POST">
+        <h2 class="mt-4">Add New Anomaly</h2>
+        {{ anomaly_form.hidden_tag() }}
+        <div class="form-group">
+            {{ anomaly_form.start_date.label(class="form-label") }}
+            {{ anomaly_form.start_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.end_date.label(class="form-label") }}
+            {{ anomaly_form.end_date(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.consumption_value.label(class="form-label") }}
+            {{ anomaly_form.consumption_value(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.nbr_hour_consumption.label(class="form-label") }}
+            {{ anomaly_form.nbr_hour_consumption(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.nbr_days_consumption.label(class="form-label") }}
+            {{ anomaly_form.nbr_days_consumption(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.start_time.label(class="form-label") }}
+            {{ anomaly_form.start_time(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.impact_consumption.label(class="form-label") }}
+            {{ anomaly_form.impact_consumption(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.period_type.label(class="form-label") }}
+            {{ anomaly_form.period_type(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.comments.label(class="form-label") }}
+            {{ anomaly_form.comments(class="form-control") }}
+        </div>
+        <div class="form-group">
+            {{ anomaly_form.submit_add(class="btn btn-success") }}
+            {{ anomaly_form.submit_validate(class="btn btn-primary") }}
+        </div>
+    </form>
+</div>
+{% endblock %}

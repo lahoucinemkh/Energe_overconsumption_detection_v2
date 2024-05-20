@@ -27,7 +27,7 @@
                   <a class="nav-link" href="{{ url_for('detector_page') }}">Detector</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link" href="#">Visualizer</a>
+                  <a class="nav-link" href="{{ url_for('manage_anomalies_page') }}">Visualizer</a>
               </li>
           </ul>
           {% if current_user.is_authenticated %}
