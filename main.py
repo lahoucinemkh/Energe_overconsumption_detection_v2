@@ -6,38 +6,38 @@ from anomalyDetector.db.models import Site
 import pandas as pd
 
 
-sites_from_db = session.query(Site).all()
+# sites_from_db = session.query(Site).all()
 
-id_list=[]
-codeRef_list=[]
-siteRef_list =[]
-brancheRef_list =[]
-noDataList=[]
+# id_list=[]
+# codeRef_list=[]
+# siteRef_list =[]
+# brancheRef_list =[]
+# noDataList=[]
 
-start = '2024-03-17'
-end = '2024-03-31'
+# start = '2024-04-21'
+# end = '2024-04-28'
 
    
-    # Iterate over the queried sites
-for site in sites_from_db:
-    codeRef_list.append(site.site_code)
-    siteRef_list.append(site.name)
-    brancheRef_list.append(site.branch)
-    id_list.append(site.id)
+#     # Iterate over the queried sites
+# for site in sites_from_db:
+#     codeRef_list.append(site.site_code)
+#     siteRef_list.append(site.name)
+#     brancheRef_list.append(site.branch)
+#     id_list.append(site.id)
 
 
-STAGE_NAME = "Data Ingestion stage"
-try:
-   logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-   data_ingestion = DataIngestionTrainingPipeline(start, end, id_list, codeRef_list, siteRef_list, brancheRef_list)
-   data_ingestion.main()
-   logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-except Exception as e:
-        logger.exception(e)
-        raise e  
+# STAGE_NAME = "Data Ingestion stage"
+# try:
+#    logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
+#    data_ingestion = DataIngestionTrainingPipeline(start, end, id_list, codeRef_list, siteRef_list, brancheRef_list)
+#    data_ingestion.main()
+#    logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+# except Exception as e:
+#         logger.exception(e)
+#         raise e  
 
-start = '2024-03-17 00:00:00'
-end = '2024-03-31 00:00:00'
+start = '2024-04-21 00:00:00'
+end = '2024-04-28 23:50:00'
 
 # Convertir en datetime
 start = pd.to_datetime(start)

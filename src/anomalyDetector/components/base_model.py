@@ -449,16 +449,17 @@ class BaseModel:
         session.commit()
 
 
+
         # close the session
         session.close()
         
-        writer = pd.ExcelWriter(f'{code}.xlsx', engine='xlsxwriter')
+        # writer = pd.ExcelWriter(f'{code}.xlsx', engine='xlsxwriter')
 
-        df_dimOut.to_excel(writer, sheet_name='dim', index=False)
-        df_Fusion.to_excel(writer, sheet_name='Nuit', index=False)
+        # df_dimOut.to_excel(writer, sheet_name='dim', index=False)
+        # df_Fusion.to_excel(writer, sheet_name='Nuit', index=False)
 
-        #writer.save()
-        writer.close()
+        # #writer.save()
+        # writer.close()
 
 
            
