@@ -1,12 +1,13 @@
 from anomalyDetector import app
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, send_file
 from anomalyDetector import logger
 from datetime import datetime
 from anomalyDetector.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from anomalyDetector.pipeline.stage_02_base_model import BaseModelTrainingPipeline
 from anomalyDetector.pipeline.stage_03_data_availability import DataAvailabilityTrainingPipeline
+from anomalyDetector.components.anomalies_download import anomaliesDownload
 from anomalyDetector.db.models import User, Site, Anomaly
-from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm
+from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm, DownloadForm
 from anomalyDetector.db.db import session
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy.orm.exc import NoResultFound
@@ -23,6 +24,7 @@ def detector_page():
     DataIngestion = DataIngestionForm()
     DataAvailability = DataAvailabilityForm()
     BaseModel = BaseModelForm()
+    Download = DownloadForm()
 
     if DataIngestion.validate_on_submit():
         sites_from_db = session.query(Site).all()
@@ -76,11 +78,11 @@ def detector_page():
                 raise e 
         flash(f"Stage of data availability passed successfully!", category='success')
 
-    if DataIngestion.errors != {}: #If there are not errors from the validations
+    if DataAvailability.errors != {}: #If there are not errors from the validations
         for err_msg in DataIngestion.errors.values():
             flash(f'There was an error: {err_msg}', category='danger')
 
-    if DataIngestion.validate_on_submit():
+    if BaseModel.validate_on_submit():
         start = datetime.combine(BaseModel.start_date.data, datetime.min.time())
         end = datetime.combine(BaseModel.end_date.data, datetime.min.time())
 
@@ -137,12 +139,36 @@ def detector_page():
                  raise e   
         flash(f"Stage of anomalies detection passed successfully!", category='success')
 
-    if DataIngestion.errors != {}: #If there are not errors from the validations
+    if BaseModel.errors != {}: #If there are not errors from the validations
         for err_msg in DataIngestion.errors.values():
-            flash(f'There was an error: {err_msg}', category='danger')        
+            flash(f'There was an error: {err_msg}', category='danger')
+
+    if Download.validate_on_submit():
+        start = Download.start_date.data
+        end = Download.end_date.data
+
+        output_file = 'suivi_auto.xlsx'
+
+        STAGE_NAME = "Anomalies Download stage"
+        try:
+           logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
+           anomalies_download = anomaliesDownload(start, end)
+           anomalies_download.getAnomalies(output_file)
+
+           return send_file(output_file, as_attachment=True)
+
+           logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+        except Exception as e:
+                logger.exception(e)
+                raise e 
+        flash(f"Stage of anomalies download passed successfully!", category='success')
+
+    if Download.errors != {}: #If there are not errors from the validations
+        for err_msg in DataIngestion.errors.values():
+            flash(f'There was an error: {err_msg}', category='danger')                
 
 
-    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel)
+    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():

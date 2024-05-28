@@ -56,6 +56,23 @@
         {{ BaseModel.submit(class="btn btn-lg btn-block btn-primary") }}
 
       </form>
+      <br>
+      <form method="POST" class="form-signin" style="color:white">
+        {{ Download.hidden_tag() }}
+        <h1 class="h3 mb-3 font-weight-normal">
+            Download suivi auto
+        </h1>
+        <br>
+        {{ Download.start_date.label() }}
+        {{ Download.start_date(class="form-control", placeholder="Start date") }}
+
+        {{ Download.end_date.label() }}
+        {{ Download.end_date(class="form-control", placeholder="End date") }}
+
+
+        {{ Download.submit(class="btn btn-lg btn-block btn-primary") }}
+
+      </form>
   </div>
 </body>
 

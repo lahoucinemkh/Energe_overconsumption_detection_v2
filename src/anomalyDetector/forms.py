@@ -45,7 +45,12 @@ class DataAvailabilityForm(FlaskForm):
 class BaseModelForm(FlaskForm):
     start_date = DateField('Start at')
     end_date = DateField('End at')
-    submit = SubmitField('Start detecting anomalies')   
+    submit = SubmitField('Start detecting anomalies')
+
+class DownloadForm(FlaskForm):
+    start_date = DateField('Start at')
+    end_date = DateField('End at')
+    submit = SubmitField('download your excel file')       
 
 
 class SiteSelectionForm(FlaskForm):

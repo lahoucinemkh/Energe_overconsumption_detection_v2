@@ -10,7 +10,7 @@ class anomaliesDownload:
         self.end = end 
         
 
-    def getAnomalies(self):
+    def getAnomalies(self, output_file):
         start = self.start
         end = self.end
 
@@ -32,7 +32,7 @@ class anomaliesDownload:
 
         df.drop(columns=['id', 'site_id'], inplace=True)
 
-        writer = pd.ExcelWriter('suivi_auto.xlsx', engine='xlsxwriter')
+        writer = pd.ExcelWriter(output_file, engine='xlsxwriter')
         df.to_excel(writer, sheet_name='anomalies', index=False)
         writer.close()
 
