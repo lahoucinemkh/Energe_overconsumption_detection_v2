@@ -54,6 +54,20 @@
         {{ Download.end_date(class="form-control", placeholder="End date") }}
         {{ Download.submit(class="btn btn-lg btn-block btn-primary") }}
       </form>
+      <br>
+      <form method="POST" enctype="multipart/form-data" class="form-signin" style="color:white">
+        {{ AnomalyUpdate.hidden_tag() }}
+        <input type="hidden" name="form_type" value="anomaly_update">
+        <h1 class="h3 mb-3 font-weight-normal">Update Anomalies</h1>
+        <br>
+        {{ AnomalyUpdate.start_date.label() }}
+        {{ AnomalyUpdate.start_date(class="form-control", placeholder="Start date") }}
+        {{ AnomalyUpdate.end_date.label() }}
+        {{ AnomalyUpdate.end_date(class="form-control", placeholder="End date") }}
+        {{ AnomalyUpdate.file.label() }}
+        {{ AnomalyUpdate.file(class="form-control") }}
+        {{ AnomalyUpdate.submit(class="btn btn-lg btn-block btn-primary") }}
+      </form>
   </div>
 </body>
 {% endblock %}

@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, DateField, SelectField
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Length, EqualTo, Email, DataRequired, ValidationError
 from anomalyDetector.db.models import User
 from anomalyDetector.db.db import session
@@ -50,7 +51,16 @@ class BaseModelForm(FlaskForm):
 class DownloadForm(FlaskForm):
     start_date = DateField('Start at')
     end_date = DateField('End at')
-    submit = SubmitField('download your excel file')       
+    submit = SubmitField('download your excel file')  
+
+class UpdateForm(FlaskForm):
+    start_date = DateField('Start at')
+    end_date = DateField('End at')
+    file = FileField('Excel file', validators=[
+        FileRequired(),
+        FileAllowed(['xls', 'xlsx'], 'Excel files only!')
+    ])
+    submit = SubmitField('Update anomalies')         
 
 
 class SiteSelectionForm(FlaskForm):

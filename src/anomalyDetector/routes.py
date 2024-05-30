@@ -1,5 +1,6 @@
 from anomalyDetector import app
 import os
+import pandas as pd
 from flask import render_template, redirect, url_for, flash, send_file, request
 from anomalyDetector import logger
 from datetime import datetime
@@ -7,8 +8,9 @@ from anomalyDetector.pipeline.stage_01_data_ingestion import DataIngestionTraini
 from anomalyDetector.pipeline.stage_02_base_model import BaseModelTrainingPipeline
 from anomalyDetector.pipeline.stage_03_data_availability import DataAvailabilityTrainingPipeline
 from anomalyDetector.components.anomalies_download import anomaliesDownload
+from anomalyDetector.components.anomalies_upload import AnomaliesUpload
 from anomalyDetector.db.models import User, Site, Anomaly
-from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm, DownloadForm
+from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm, DownloadForm, UpdateForm
 from anomalyDetector.db.db import session
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy.orm.exc import NoResultFound
@@ -292,6 +294,7 @@ def detector_page():
     DataAvailability = DataAvailabilityForm()
     BaseModel = BaseModelForm()
     Download = DownloadForm()
+    AnomalyUpdate = UpdateForm()
 
     if request.method == 'POST':
         form_type = request.form.get('form_type')
@@ -312,7 +315,11 @@ def detector_page():
             handle_download(Download)
             return redirect(url_for('detector_page'))
 
-    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download)
+        if form_type == 'anomaly_update' and AnomalyUpdate.validate_on_submit():
+            handle_anomaly_update(AnomalyUpdate)
+            return redirect(url_for('detector_page'))    
+
+    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate)
 
 def handle_data_ingestion(form):
     sites_from_db = session.query(Site).all()
@@ -399,7 +406,7 @@ def handle_download(form):
     base_dir = os.path.abspath(os.path.dirname(__file__))
     output_file = os.path.join(base_dir, '..', 'suivi_auto.xlsx')
 
-    STAGE_NAME = "Anomalies Download stage"
+    STAGE_NAME = "Anomalies Download"
     try:
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
         anomalies_download = anomaliesDownload(start, end)
@@ -410,5 +417,25 @@ def handle_download(form):
     except Exception as e:
         logger.exception(e)
         flash(f"An error occurred during anomalies download: {e}", category='danger')
+
+def handle_anomaly_update(form):
+    start_date = form.start_date.data
+    end_date = form.end_date.data
+    file = form.file.data
+
+    
+    df = pd.read_excel(file,  sheet_name='Feuil2', header=0, skiprows=0)
+
+    STAGE_NAME = "Anomalies Update"
+    try:
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        anomaly_upload = AnomaliesUpload(start_date, end_date, df)
+        anomaly_upload.delete_existing_anomalies()
+        anomaly_upload.insert_validated_anomalies()
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        flash("Anomalies updated successfully!", category='success')        
+    except Exception as e:
+        logger.exception(e)
+        flash(f"An error occurred during anomalies update: {e}", category='danger')
 
     
