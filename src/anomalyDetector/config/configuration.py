@@ -4,7 +4,8 @@ from pathlib import Path
 from anomalyDetector.utils.common import read_yaml, create_directories
 from anomalyDetector.entity.config_entity import (DataIngestionConfig,
                                                   BaseModelConfig,
-                                                  DataAvailabilityConfig)
+                                                  DataAvailabilityConfig,
+                                                  AnomalyOccurrenceConfig)
 
 
 class ConfigurationManager:
@@ -52,4 +53,16 @@ class ConfigurationManager:
             root_dir=config.root_dir
         )
 
-        return data_availability_config       
+        return data_availability_config 
+
+
+    def get_anomaly_occurrence_config(self) -> AnomalyOccurrenceConfig:
+        config = self.config.anomaly_occurrence
+
+        create_directories([config.root_dir])
+
+        anomaly_occurrence_config = AnomalyOccurrenceConfig(
+            root_dir=config.root_dir
+        )
+
+        return anomaly_occurrence_config          

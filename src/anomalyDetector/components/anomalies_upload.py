@@ -42,7 +42,7 @@ class AnomaliesUpload:
                 nbr_hour_consumption=row["Nb d'heures"],
                 nbr_days_consumption=row['Nb nuits/jours concernés'],
                 impact_consumption=row['Impact conso (kWh)'],
-                period_type=row['Talon ref'],
+                period_type=row["Période d'alerte"],
                 comments=row['Commentaires']
             )
             session.add(new_anomaly)

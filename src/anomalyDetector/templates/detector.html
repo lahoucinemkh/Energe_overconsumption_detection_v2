@@ -68,6 +68,18 @@
         {{ AnomalyUpdate.file(class="form-control") }}
         {{ AnomalyUpdate.submit(class="btn btn-lg btn-block btn-primary") }}
       </form>
+      <br>
+      <form method="POST" class="form-signin" style="color:white">
+        {{ AnomalyOccurrence.hidden_tag() }}
+        <input type="hidden" name="form_type" value="anomaly_occurrence">
+        <h1 class="h3 mb-3 font-weight-normal">Anomaly Occurence</h1>
+        <br>
+        {{ AnomalyOccurrence.start_date.label() }}
+        {{ AnomalyOccurrence.start_date(class="form-control", placeholder="Start date") }}
+        {{ AnomalyOccurrence.end_date.label() }}
+        {{ AnomalyOccurrence.end_date(class="form-control", placeholder="End date") }}
+        {{ AnomalyOccurrence.submit(class="btn btn-lg btn-block btn-primary") }}
+      </form>
   </div>
 </body>
 {% endblock %}

@@ -43,6 +43,11 @@ class DataAvailabilityForm(FlaskForm):
     end_date = DateField('End at')
     submit = SubmitField('Start checking data availability')
 
+class AnomalyOccurrenceForm(FlaskForm):
+    start_date = DateField('Start at')
+    end_date = DateField('End at')
+    submit = SubmitField('Start checking anomaly occurrence')    
+
 class BaseModelForm(FlaskForm):
     start_date = DateField('Start at')
     end_date = DateField('End at')

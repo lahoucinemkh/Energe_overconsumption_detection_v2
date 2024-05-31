@@ -15,4 +15,8 @@ class BaseModelConfig:
 
 @dataclass(frozen=True)
 class DataAvailabilityConfig:
-    root_dir: Path    
+    root_dir: Path
+
+@dataclass(frozen=True)
+class AnomalyOccurrenceConfig:
+    root_dir: Path          

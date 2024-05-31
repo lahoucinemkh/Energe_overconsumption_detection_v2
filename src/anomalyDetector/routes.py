@@ -7,10 +7,11 @@ from datetime import datetime
 from anomalyDetector.pipeline.stage_01_data_ingestion import DataIngestionTrainingPipeline
 from anomalyDetector.pipeline.stage_02_base_model import BaseModelTrainingPipeline
 from anomalyDetector.pipeline.stage_03_data_availability import DataAvailabilityTrainingPipeline
+from anomalyDetector.pipeline.stage_04_anomaly_occurrence import AnomalyOccurrenceTrainingPipeline
 from anomalyDetector.components.anomalies_download import anomaliesDownload
 from anomalyDetector.components.anomalies_upload import AnomaliesUpload
 from anomalyDetector.db.models import User, Site, Anomaly
-from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm, DownloadForm, UpdateForm
+from anomalyDetector.forms import RegisterForm, LoginForm, DataIngestionForm, DataAvailabilityForm, AnomalyOccurrenceForm, BaseModelForm, AnomalyEditForm, SiteSelectionForm, DownloadForm, UpdateForm
 from anomalyDetector.db.db import session
 from flask_login import login_user, logout_user, login_required
 from sqlalchemy.orm.exc import NoResultFound
@@ -292,6 +293,7 @@ def manage_anomalies_page():
 def detector_page():
     DataIngestion = DataIngestionForm()
     DataAvailability = DataAvailabilityForm()
+    AnomalyOccurrence = AnomalyOccurrenceForm()
     BaseModel = BaseModelForm()
     Download = DownloadForm()
     AnomalyUpdate = UpdateForm()
@@ -306,6 +308,7 @@ def detector_page():
         if form_type == 'data_availability' and DataAvailability.validate_on_submit():
             handle_data_availability(DataAvailability)
             return redirect(url_for('detector_page'))
+   
 
         if form_type == 'base_model' and BaseModel.validate_on_submit():
             handle_base_model(BaseModel)
@@ -317,9 +320,13 @@ def detector_page():
 
         if form_type == 'anomaly_update' and AnomalyUpdate.validate_on_submit():
             handle_anomaly_update(AnomalyUpdate)
-            return redirect(url_for('detector_page'))    
+            return redirect(url_for('detector_page'))
 
-    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate)
+        if form_type == 'anomaly_occurrence' and AnomalyOccurrence.validate_on_submit():
+            handle_anomaly_occurrence(AnomalyOccurrence)
+            return redirect(url_for('detector_page'))         
+
+    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate, AnomalyOccurrence=AnomalyOccurrence)
 
 def handle_data_ingestion(form):
     sites_from_db = session.query(Site).all()
@@ -334,7 +341,7 @@ def handle_data_ingestion(form):
         brancheRef_list.append(site.branch)
         id_list.append(site.id)
 
-    STAGE_NAME = "Data Ingestion stage"
+    STAGE_NAME = "Data Ingestion"
     try:
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
         data_ingestion = DataIngestionTrainingPipeline(start, end, id_list, codeRef_list, siteRef_list, brancheRef_list)
@@ -349,7 +356,7 @@ def handle_data_availability(form):
     start = form.start_date.data
     end = form.end_date.data
 
-    STAGE_NAME = "Data Availability stage"
+    STAGE_NAME = "Data Availability"
     try:
         logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
         data_availability = DataAvailabilityTrainingPipeline(start, end)
@@ -437,5 +444,21 @@ def handle_anomaly_update(form):
     except Exception as e:
         logger.exception(e)
         flash(f"An error occurred during anomalies update: {e}", category='danger')
+
+def handle_anomaly_occurrence(form):
+    start = form.start_date.data
+    end = form.end_date.data
+
+    STAGE_NAME = "anomaly occurrence"
+    try: 
+        logger.info(f"*******************")
+        logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
+        prepare_anomaly_occurrence = AnomalyOccurrenceTrainingPipeline(start, end)
+        prepare_anomaly_occurrence.main()
+        logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
+        flash("Anomaly occurrence check passed successfully!", category='success')    
+    except Exception as e:
+        logger.exception(e)
+        flash(f"An error occurred during anomaly occurrence check: {e}", category='danger')
 
     
