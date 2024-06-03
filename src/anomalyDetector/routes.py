@@ -22,157 +22,6 @@ from sqlalchemy.orm.exc import NoResultFound
 def home_page():
     return render_template('home.html')
 
-# @app.route('/detector', methods=['GET', 'POST'])
-# #@login_required
-# def detector_page():
-#     DataIngestion = DataIngestionForm()
-#     DataAvailability = DataAvailabilityForm()
-#     BaseModel = BaseModelForm()
-#     Download = DownloadForm()
-
-#     if DataIngestion.validate_on_submit():
-#         sites_from_db = session.query(Site).all()
-
-#         id_list=[]
-#         codeRef_list=[]
-#         siteRef_list =[]
-#         brancheRef_list =[]
-#         #noDataList=[]
-
-#         start = DataIngestion.start_date.data
-#         end = DataIngestion.end_date.data
-
-   
-#             # Iterate over the queried sites
-#         for site in sites_from_db:
-#             codeRef_list.append(site.site_code)
-#             siteRef_list.append(site.name)
-#             brancheRef_list.append(site.branch)
-#             id_list.append(site.id)
-
-
-#         STAGE_NAME = "Data Ingestion stage"
-#         try:
-#            logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-#            data_ingestion = DataIngestionTrainingPipeline(start, end, id_list, codeRef_list, siteRef_list, brancheRef_list)
-#            data_ingestion.main()
-#            logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-#         except Exception as e:
-#                 logger.exception(e)
-#                 raise e 
-#         flash(f"Stage of data ingestion passed successfully!", category='success')
-
-#     if DataIngestion.errors != {}: #If there are not errors from the validations
-#         for err_msg in DataIngestion.errors.values():
-#             flash(f'There was an error: {err_msg}', category='danger')
-
-#     if DataAvailability.validate_on_submit():
-#         start = DataAvailability.start_date.data
-#         end = DataAvailability.end_date.data
-
-   
-#         STAGE_NAME = "Data Availability stage"
-#         try:
-#            logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-#            data_availability = DataAvailabilityTrainingPipeline(start, end)
-#            data_availability.main()
-#            logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-#         except Exception as e:
-#                 logger.exception(e)
-#                 raise e 
-#         flash(f"Stage of data availability passed successfully!", category='success')
-
-#     if DataAvailability.errors != {}: #If there are not errors from the validations
-#         for err_msg in DataIngestion.errors.values():
-#             flash(f'There was an error: {err_msg}', category='danger')
-
-#     if BaseModel.validate_on_submit():
-#         start = datetime.combine(BaseModel.start_date.data, datetime.min.time())
-#         end = datetime.combine(BaseModel.end_date.data, datetime.min.time())
-
-        
-
-#         sites_from_db = session.query(Site).all()
-
-#         id_list=[]
-#         codeRef_list=[]
-#         fer_list = []
-#         ouv_list = []
-#         tal_list = []
-#         marg = []
-#         dfer_list = []
-#         douv_list = []
-
-
-
-#         # Iterate over the queried sites
-#         for site in sites_from_db:
-#            id_list.append(site.id)
-#            codeRef_list.append(site.site_code)
-#            fer_list.append(site.closing_hour_week)
-#            ouv_list.append(site.opening_hour_week)
-#            tal_list.append(site.winter_threshold)
-#            marg.append(site.margin)
-#            dfer_list.append(site.closing_hour_sun)
-#            douv_list.append(site.opening_hour_sun)
-
-#         for i in range(len(codeRef_list)):
-#            site_code = codeRef_list[i]    
-#            # Définition des heures d'ouverture et de fermeture de l'entreprise
-#            opening_hour_week = ouv_list[i]
-#            closing_hour_week = fer_list[i]
-
-#            closing_hour_sun = dfer_list[i]
-#            opening_hour_sun = douv_list[i]
-
-#           # Définition du talon de consommation
-#            threshold = tal_list[i]
-#            margin = marg[i]
-#            id = id_list[i]    
- 
-
-#            STAGE_NAME = "base model"
-#            try: 
-#               logger.info(f"*******************")
-#               logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-#               prepare_base_model = BaseModelTrainingPipeline(id, start, end, site_code, closing_hour_week, opening_hour_week, threshold, margin, closing_hour_sun, opening_hour_sun)
-#               prepare_base_model.main()
-#               logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-#            except Exception as e:
-#                  logger.exception(e)
-#                  raise e   
-#         flash(f"Stage of anomalies detection passed successfully!", category='success')
-
-#     if BaseModel.errors != {}: #If there are not errors from the validations
-#         for err_msg in DataIngestion.errors.values():
-#             flash(f'There was an error: {err_msg}', category='danger')
-
-#     if Download.validate_on_submit():
-#         start = Download.start_date.data
-#         end = Download.end_date.data
-
-#         output_file = 'suivi_auto.xlsx'
-
-#         STAGE_NAME = "Anomalies Download stage"
-#         try:
-#            logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<") 
-#            anomalies_download = anomaliesDownload(start, end)
-#            anomalies_download.getAnomalies(output_file)
-
-#            return send_file(output_file, as_attachment=True)
-
-#            logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
-#         except Exception as e:
-#                 logger.exception(e)
-#                 raise e 
-#         flash(f"Stage of anomalies download passed successfully!", category='success')
-
-#     if Download.errors != {}: #If there are not errors from the validations
-#         for err_msg in DataIngestion.errors.values():
-#             flash(f'There was an error: {err_msg}', category='danger')                
-
-
-#     return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register_page():
@@ -209,11 +58,13 @@ def login_page():
 
     return render_template('login.html', form=form)  
 
+
 @app.route('/logout')
 def logout_page():
     logout_user()
     flash("You have been logged out!", category='info')
-    return redirect(url_for("home_page"))   
+    return redirect(url_for("home_page"))  
+     
 
 
 @app.route('/manage_anomalies', methods=['GET', 'POST'])
@@ -290,6 +141,7 @@ def manage_anomalies_page():
 
 
 @app.route('/detector', methods=['GET', 'POST'])
+# #@login_required
 def detector_page():
     DataIngestion = DataIngestionForm()
     DataAvailability = DataAvailabilityForm()

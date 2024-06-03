@@ -5,82 +5,168 @@
 {% endblock %}
 
 {% block content %}
+<head>
+  <style>
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: white;
+    }
+
+    .functionality-container {
+        display: flex;
+        width: 100%;
+        margin-bottom: 20px;
+        background-color: #333;
+        padding: 20px;
+        border-radius: 8px;
+    }
+
+    .left-section {
+        flex: 1;
+        padding: 20px;
+        border-right: 1px solid #555;
+    }
+
+    .right-section {
+        flex: 1;
+        padding: 20px;
+    }
+
+    .right-section form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .right-section .form-control, .right-section .btn {
+        width: 80%;
+        margin-bottom: 10px;
+    }
+  </style>
+</head>
 <body class="text-center">
   <div class="container">
-      <form method="POST" class="form-signin" style="color:white">
+
+    <!-- Data Ingestion -->
+    <div class="functionality-container">
+      <div class="left-section">
+        <h1 class="h3 mb-3 font-weight-normal">Data Ingestion</h1>
+        <p>Utilisez cette section pour ingérer les données dans le système.</p>
+      </div>
+      <div class="right-section">
+        <form method="POST" class="form-signin">
           {{ DataIngestion.hidden_tag() }}
           <input type="hidden" name="form_type" value="data_ingestion">
-          <h1 class="h3 mb-3 font-weight-normal">Data Ingestion</h1>
-          <br>
           {{ DataIngestion.start_date.label() }}
           {{ DataIngestion.start_date(class="form-control", placeholder="Start date") }}
           {{ DataIngestion.end_date.label() }}
           {{ DataIngestion.end_date(class="form-control", placeholder="End date") }}
           {{ DataIngestion.submit(class="btn btn-lg btn-block btn-primary") }}
-      </form>
-      <br>
-      <form method="POST" class="form-signin" style="color:white">
-        {{ DataAvailability.hidden_tag() }}
-        <input type="hidden" name="form_type" value="data_availability">
+        </form>
+      </div>
+    </div>
+
+    <!-- Data Availability -->
+    <div class="functionality-container">
+      <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Data Availability</h1>
-        <br>
-        {{ DataAvailability.start_date.label() }}
-        {{ DataAvailability.start_date(class="form-control", placeholder="Start date") }}
-        {{ DataAvailability.end_date.label() }}
-        {{ DataAvailability.end_date(class="form-control", placeholder="End date") }}
-        {{ DataAvailability.submit(class="btn btn-lg btn-block btn-primary") }}
-      </form>
-      <br>
-      <form method="POST" class="form-signin" style="color:white">
-        {{ BaseModel.hidden_tag() }}
-        <input type="hidden" name="form_type" value="base_model">
+        <p>Vérifiez la disponibilité des données pour une période donnée.</p>
+      </div>
+      <div class="right-section">
+        <form method="POST" class="form-signin">
+          {{ DataAvailability.hidden_tag() }}
+          <input type="hidden" name="form_type" value="data_availability">
+          {{ DataAvailability.start_date.label() }}
+          {{ DataAvailability.start_date(class="form-control", placeholder="Start date") }}
+          {{ DataAvailability.end_date.label() }}
+          {{ DataAvailability.end_date(class="form-control", placeholder="End date") }}
+          {{ DataAvailability.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+      </div>
+    </div>
+
+    <!-- Anomalies Detection -->
+    <div class="functionality-container">
+      <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Anomalies Detection</h1>
-        <br>
-        {{ BaseModel.start_date.label() }}
-        {{ BaseModel.start_date(class="form-control", placeholder="Start date") }}
-        {{ BaseModel.end_date.label() }}
-        {{ BaseModel.end_date(class="form-control", placeholder="End date") }}
-        {{ BaseModel.submit(class="btn btn-lg btn-block btn-primary") }}
-      </form>
-      <br>
-      <form method="POST" class="form-signin" style="color:white">
-        {{ Download.hidden_tag() }}
-        <input type="hidden" name="form_type" value="download">
+        <p>Détectez les anomalies dans les données sur une période spécifiée.</p>
+      </div>
+      <div class="right-section">
+        <form method="POST" class="form-signin">
+          {{ BaseModel.hidden_tag() }}
+          <input type="hidden" name="form_type" value="base_model">
+          {{ BaseModel.start_date.label() }}
+          {{ BaseModel.start_date(class="form-control", placeholder="Start date") }}
+          {{ BaseModel.end_date.label() }}
+          {{ BaseModel.end_date(class="form-control", placeholder="End date") }}
+          {{ BaseModel.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+      </div>
+    </div>
+
+    <!-- Download suivi auto -->
+    <div class="functionality-container">
+      <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Download suivi auto</h1>
-        <br>
-        {{ Download.start_date.label() }}
-        {{ Download.start_date(class="form-control", placeholder="Start date") }}
-        {{ Download.end_date.label() }}
-        {{ Download.end_date(class="form-control", placeholder="End date") }}
-        {{ Download.submit(class="btn btn-lg btn-block btn-primary") }}
-      </form>
-      <br>
-      <form method="POST" enctype="multipart/form-data" class="form-signin" style="color:white">
-        {{ AnomalyUpdate.hidden_tag() }}
-        <input type="hidden" name="form_type" value="anomaly_update">
+        <p>Téléchargez le suivi automatique pour la période sélectionnée.</p>
+      </div>
+      <div class="right-section">
+        <form method="POST" class="form-signin">
+          {{ Download.hidden_tag() }}
+          <input type="hidden" name="form_type" value="download">
+          {{ Download.start_date.label() }}
+          {{ Download.start_date(class="form-control", placeholder="Start date") }}
+          {{ Download.end_date.label() }}
+          {{ Download.end_date(class="form-control", placeholder="End date") }}
+          {{ Download.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+      </div>
+    </div>
+
+    <!-- Update Anomalies -->
+    <div class="functionality-container">
+      <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Update Anomalies</h1>
-        <br>
-        {{ AnomalyUpdate.start_date.label() }}
-        {{ AnomalyUpdate.start_date(class="form-control", placeholder="Start date") }}
-        {{ AnomalyUpdate.end_date.label() }}
-        {{ AnomalyUpdate.end_date(class="form-control", placeholder="End date") }}
-        {{ AnomalyUpdate.file.label() }}
-        {{ AnomalyUpdate.file(class="form-control") }}
-        {{ AnomalyUpdate.submit(class="btn btn-lg btn-block btn-primary") }}
-      </form>
-      <br>
-      <form method="POST" class="form-signin" style="color:white">
-        {{ AnomalyOccurrence.hidden_tag() }}
-        <input type="hidden" name="form_type" value="anomaly_occurrence">
-        <h1 class="h3 mb-3 font-weight-normal">Anomaly Occurence</h1>
-        <br>
-        {{ AnomalyOccurrence.start_date.label() }}
-        {{ AnomalyOccurrence.start_date(class="form-control", placeholder="Start date") }}
-        {{ AnomalyOccurrence.end_date.label() }}
-        {{ AnomalyOccurrence.end_date(class="form-control", placeholder="End date") }}
-        {{ AnomalyOccurrence.submit(class="btn btn-lg btn-block btn-primary") }}
-      </form>
+        <p>Mettre à jour les anomalies détectées avec un fichier CSV.</p>
+      </div>
+      <div class="right-section">
+        <form method="POST" enctype="multipart/form-data" class="form-signin">
+          {{ AnomalyUpdate.hidden_tag() }}
+          <input type="hidden" name="form_type" value="anomaly_update">
+          {{ AnomalyUpdate.start_date.label() }}
+          {{ AnomalyUpdate.start_date(class="form-control", placeholder="Start date") }}
+          {{ AnomalyUpdate.end_date.label() }}
+          {{ AnomalyUpdate.end_date(class="form-control", placeholder="End date") }}
+          {{ AnomalyUpdate.file.label() }}
+          {{ AnomalyUpdate.file(class="form-control") }}
+          {{ AnomalyUpdate.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+      </div>
+    </div>
+
+    <!-- Anomaly Occurrence -->
+    <div class="functionality-container">
+      <div class="left-section">
+        <h1 class="h3 mb-3 font-weight-normal">Anomaly Occurrence</h1>
+        <p>Affichez les occurrences des anomalies pour la période choisie.</p>
+      </div>
+      <div class="right-section">
+        <form method="POST" class="form-signin">
+          {{ AnomalyOccurrence.hidden_tag() }}
+          <input type="hidden" name="form_type" value="anomaly_occurrence">
+          {{ AnomalyOccurrence.start_date.label() }}
+          {{ AnomalyOccurrence.start_date(class="form-control", placeholder="Start date") }}
+          {{ AnomalyOccurrence.end_date.label() }}
+          {{ AnomalyOccurrence.end_date(class="form-control", placeholder="End date") }}
+          {{ AnomalyOccurrence.submit(class="btn btn-lg btn-block btn-primary") }}
+        </form>
+      </div>
+    </div>
+
   </div>
 </body>
 {% endblock %}
+
 

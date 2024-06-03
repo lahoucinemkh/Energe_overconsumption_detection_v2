@@ -54,6 +54,37 @@ class DataAvailability:
     
         if anomalies:
             anomalies_df = pd.concat(anomalies)
+            periods = []
+            for site_code, group in anomalies_df.groupby('site_code'):
+                for status, status_group in group.groupby('status'):
+                    status_group = status_group.sort_values(by='date_time')
+                    start_time = status_group.iloc[0]['date_time']
+                    end_time = status_group.iloc[0]['date_time']
+
+                    for i in range(1, len(status_group)):
+                        current_time = status_group.iloc[i]['date_time']
+                        previous_time = status_group.iloc[i - 1]['date_time']
+
+                        if (current_time - previous_time) > timedelta(minutes=10):
+                            periods.append({
+                                'site_code': site_code,
+                                'start_date': start_time,
+                                'end_date': end_time,
+                                'status': status
+                            })
+                            start_time = current_time
+
+                        end_time = current_time
+
+                    # Append the last period
+                    periods.append({
+                        'site_code': site_code,
+                        'start_date': start_time,
+                        'end_date': end_time,
+                        'status': status
+                    })
+
+            periods_df = pd.DataFrame(periods)
             file_name = f"{directory}/missing_data_{start_date.strftime('%Y-%m-%d')}_{end_date.strftime('%Y-%m-%d')}.xlsx"
-            anomalies_df.to_excel(file_name, index=False)
+            periods_df.to_excel(file_name, index=False)
 
