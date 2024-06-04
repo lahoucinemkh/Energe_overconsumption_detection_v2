@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, DateTime, ForeignKey, Time, Date
+from sqlalchemy import Column, Integer, String, Float, DateTime, ForeignKey, Time, Date
 from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.ext.declarative import declared_attr
 from anomalyDetector import bcrypt, login_manager
@@ -34,6 +34,7 @@ class Site(Base):
     closing_hour_sun = Column(Time)
     opening_hour_other = Column(Time)
     closing_hour_other = Column(Time)
+    comments = Column(String)
 
     meters = relationship('Meter', back_populates='site')
     anomalies = relationship('Anomaly', back_populates='site')
@@ -85,7 +86,6 @@ class User(Base, UserMixin):
     __tablename__ = 'user_table'
 
     id = Column(Integer, primary_key=True)
-    username = Column(String(length=30), nullable=False, unique=True)
     email_address = Column(String(length=50), nullable=False, unique=True)
     password_hash = Column(String(length=60), nullable=False)
 

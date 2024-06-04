@@ -27,13 +27,12 @@ def home_page():
 def register_page():
     form = RegisterForm()
     if form.validate_on_submit():
-        user_to_create = User(username=form.username.data,
-                              email_address=form.email_address.data,
+        user_to_create = User(email_address=form.email_address.data,
                               password=form.password1.data)
         session.add(user_to_create)
         session.commit()
         login_user(user_to_create)
-        flash(f"Account created successfully! You are now logged in as {user_to_create.username}", category='success')
+        flash(f"Account created successfully! You are now logged in as {user_to_create.email_address}", category='success')
         return redirect(url_for('home_page'))
     if form.errors != {}: #If there are not errors from the validations
         for err_msg in form.errors.values():
@@ -46,12 +45,12 @@ def register_page():
 def login_page():
     form = LoginForm()
     if form.validate_on_submit():
-        attempted_user = session.query(User).filter(User.username == form.username.data).first()
+        attempted_user = session.query(User).filter(User.email_address == form.email_address.data).first()
         if attempted_user and attempted_user.check_password_correction(
                 attempted_password=form.password.data
         ):
             login_user(attempted_user)
-            flash(f'Success! You are logged in as: {attempted_user.username}', category='success')
+            flash(f'Success! You are logged in as: {attempted_user.email_address}', category='success')
             return redirect(url_for('home_page'))
         else:
             flash('Username and password are not match! Please try again', category='danger')
@@ -68,7 +67,7 @@ def logout_page():
 
 
 @app.route('/manage_anomalies', methods=['GET', 'POST'])
-#@login_required
+@login_required
 def manage_anomalies_page():
     site_form = SiteSelectionForm()
     anomaly_form = AnomalyEditForm()
@@ -141,7 +140,7 @@ def manage_anomalies_page():
 
 
 @app.route('/detector', methods=['GET', 'POST'])
-# #@login_required
+@login_required
 def detector_page():
     DataIngestion = DataIngestionForm()
     DataAvailability = DataAvailabilityForm()
