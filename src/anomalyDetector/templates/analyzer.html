@@ -49,44 +49,6 @@
 <body class="text-center">
   <div class="container">
 
-    <!-- Data Ingestion -->
-    <div class="functionality-container">
-      <div class="left-section">
-        <h1 class="h3 mb-3 font-weight-normal">Data Ingestion</h1>
-        <p>Utilisez cette section pour ingérer les données dans le système.</p>
-      </div>
-      <div class="right-section">
-        <form method="POST" class="form-signin">
-          {{ DataIngestion.hidden_tag() }}
-          <input type="hidden" name="form_type" value="data_ingestion">
-          {{ DataIngestion.start_date.label() }}
-          {{ DataIngestion.start_date(class="form-control", placeholder="Start date") }}
-          {{ DataIngestion.end_date.label() }}
-          {{ DataIngestion.end_date(class="form-control", placeholder="End date") }}
-          {{ DataIngestion.submit(class="btn btn-lg btn-block btn-primary") }}
-        </form>
-      </div>
-    </div>
-
-    <!-- Data Availability -->
-    <div class="functionality-container">
-      <div class="left-section">
-        <h1 class="h3 mb-3 font-weight-normal">Data Availability</h1>
-        <p>Vérifiez la disponibilité des données pour une période donnée.</p>
-      </div>
-      <div class="right-section">
-        <form method="POST" class="form-signin">
-          {{ DataAvailability.hidden_tag() }}
-          <input type="hidden" name="form_type" value="data_availability">
-          {{ DataAvailability.start_date.label() }}
-          {{ DataAvailability.start_date(class="form-control", placeholder="Start date") }}
-          {{ DataAvailability.end_date.label() }}
-          {{ DataAvailability.end_date(class="form-control", placeholder="End date") }}
-          {{ DataAvailability.submit(class="btn btn-lg btn-block btn-primary") }}
-        </form>
-      </div>
-    </div>
-
     <!-- Anomalies Detection -->
     <div class="functionality-container">
       <div class="left-section">
@@ -168,5 +130,3 @@
   </div>
 </body>
 {% endblock %}
-
-

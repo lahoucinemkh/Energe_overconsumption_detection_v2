@@ -66,84 +66,9 @@ def logout_page():
      
 
 
-@app.route('/manage_anomalies', methods=['GET', 'POST'])
+@app.route('/analyzer', methods=['GET', 'POST'])
 @login_required
-def manage_anomalies_page():
-    site_form = SiteSelectionForm()
-    anomaly_form = AnomalyEditForm()
-    
-    # Populate site codes for selection
-    sites = session.query(Site).all()
-    site_form.site_code.choices = [(site.id, site.site_code) for site in sites]
-
-    anomalies = []
-    
-    if site_form.validate_on_submit():
-        site_id = site_form.site_code.data
-        start_date = site_form.start_date.data
-        end_date = site_form.end_date.data
-
-        anomalies = session.query(Anomaly).filter(
-            Anomaly.site_id == site_id,
-            Anomaly.start_date >= start_date,
-            Anomaly.end_date <= end_date
-        ).all()
-    
-    if anomaly_form.validate_on_submit():
-        if anomaly_form.submit_edit.data:
-            anomaly_id = anomaly_form.id.data
-            try:
-                anomaly = session.query(Anomaly).filter(Anomaly.id == anomaly_id).one()
-                anomaly.start_date = anomaly_form.start_date.data
-                anomaly.end_date = anomaly_form.end_date.data
-                anomaly.consumption_value = anomaly_form.consumption_value.data
-                anomaly.nbr_hour_consumption = anomaly_form.nbr_hour_consumption.data
-                anomaly.nbr_days_consumption = anomaly_form.nbr_days_consumption.data
-                anomaly.start_time = anomaly_form.start_time.data
-                anomaly.impact_consumption = anomaly_form.impact_consumption.data
-                anomaly.period_type = anomaly_form.period_type.data
-                anomaly.comments = anomaly_form.comments.data
-                session.commit()
-                flash('Anomaly updated successfully!', 'success')
-            except NoResultFound:
-                flash('Anomaly not found!', 'danger')
-        elif anomaly_form.submit_delete.data:
-            anomaly_id = anomaly_form.id.data
-            try:
-                anomaly = session.query(Anomaly).filter(Anomaly.id == anomaly_id).one()
-                session.delete(anomaly)
-                session.commit()
-                flash('Anomaly deleted successfully!', 'success')
-            except NoResultFound:
-                flash('Anomaly not found!', 'danger')
-        elif anomaly_form.submit_add.data:
-            new_anomaly = Anomaly(
-                site_id=site_form.site_code.data,
-                start_date=anomaly_form.start_date.data,
-                end_date=anomaly_form.end_date.data,
-                consumption_value=anomaly_form.consumption_value.data,
-                nbr_hour_consumption=anomaly_form.nbr_hour_consumption.data,
-                nbr_days_consumption=anomaly_form.nbr_days_consumption.data,
-                start_time=anomaly_form.start_time.data,
-                impact_consumption=anomaly_form.impact_consumption.data,
-                period_type=anomaly_form.period_type.data,
-                comments=anomaly_form.comments.data
-            )
-            session.add(new_anomaly)
-            session.commit()
-            flash('Anomaly added successfully!', 'success')
-        elif anomaly_form.submit_validate.data:
-            # Handle validation logic if needed
-            pass
-
-    return render_template('manage_anomalies.html', site_form=site_form, anomaly_form=anomaly_form, anomalies=anomalies)     
-
-
-@app.route('/detector', methods=['GET', 'POST'])
-@login_required
-def detector_page():
-    DataIngestion = DataIngestionForm()
-    DataAvailability = DataAvailabilityForm()
+def analyzer_page():
     AnomalyOccurrence = AnomalyOccurrenceForm()
     BaseModel = BaseModelForm()
     Download = DownloadForm()
@@ -151,33 +76,122 @@ def detector_page():
 
     if request.method == 'POST':
         form_type = request.form.get('form_type')
-
-        if form_type == 'data_ingestion' and DataIngestion.validate_on_submit():
-            handle_data_ingestion(DataIngestion)
-            return redirect(url_for('detector_page'))
-
-        if form_type == 'data_availability' and DataAvailability.validate_on_submit():
-            handle_data_availability(DataAvailability)
-            return redirect(url_for('detector_page'))
    
-
         if form_type == 'base_model' and BaseModel.validate_on_submit():
             handle_base_model(BaseModel)
-            return redirect(url_for('detector_page'))
+            return redirect(url_for('analyzer_page'))
 
         if form_type == 'download' and Download.validate_on_submit():
             handle_download(Download)
-            return redirect(url_for('detector_page'))
+            return redirect(url_for('analyzer_page'))
 
         if form_type == 'anomaly_update' and AnomalyUpdate.validate_on_submit():
             handle_anomaly_update(AnomalyUpdate)
-            return redirect(url_for('detector_page'))
+            return redirect(url_for('analyzer_page'))
 
         if form_type == 'anomaly_occurrence' and AnomalyOccurrence.validate_on_submit():
             handle_anomaly_occurrence(AnomalyOccurrence)
-            return redirect(url_for('detector_page'))         
+            return redirect(url_for('analyzer_page'))
 
-    return render_template('detector.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability, BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate, AnomalyOccurrence=AnomalyOccurrence)
+
+
+
+    # site_form = SiteSelectionForm()
+    # anomaly_form = AnomalyEditForm()
+    
+    # # Populate site codes for selection
+    # sites = session.query(Site).all()
+    # site_form.site_code.choices = [(site.id, site.site_code) for site in sites]
+
+    # anomalies = []
+    
+    # if site_form.validate_on_submit():
+    #     site_id = site_form.site_code.data
+    #     start_date = site_form.start_date.data
+    #     end_date = site_form.end_date.data
+
+    #     anomalies = session.query(Anomaly).filter(
+    #         Anomaly.site_id == site_id,
+    #         Anomaly.start_date >= start_date,
+    #         Anomaly.end_date <= end_date
+    #     ).all()
+    
+    # if anomaly_form.validate_on_submit():
+    #     if anomaly_form.submit_edit.data:
+    #         anomaly_id = anomaly_form.id.data
+    #         try:
+    #             anomaly = session.query(Anomaly).filter(Anomaly.id == anomaly_id).one()
+    #             anomaly.start_date = anomaly_form.start_date.data
+    #             anomaly.end_date = anomaly_form.end_date.data
+    #             anomaly.consumption_value = anomaly_form.consumption_value.data
+    #             anomaly.nbr_hour_consumption = anomaly_form.nbr_hour_consumption.data
+    #             anomaly.nbr_days_consumption = anomaly_form.nbr_days_consumption.data
+    #             anomaly.start_time = anomaly_form.start_time.data
+    #             anomaly.impact_consumption = anomaly_form.impact_consumption.data
+    #             anomaly.period_type = anomaly_form.period_type.data
+    #             anomaly.comments = anomaly_form.comments.data
+    #             session.commit()
+    #             flash('Anomaly updated successfully!', 'success')
+    #         except NoResultFound:
+    #             flash('Anomaly not found!', 'danger')
+    #     elif anomaly_form.submit_delete.data:
+    #         anomaly_id = anomaly_form.id.data
+    #         try:
+    #             anomaly = session.query(Anomaly).filter(Anomaly.id == anomaly_id).one()
+    #             session.delete(anomaly)
+    #             session.commit()
+    #             flash('Anomaly deleted successfully!', 'success')
+    #         except NoResultFound:
+    #             flash('Anomaly not found!', 'danger')
+    #     elif anomaly_form.submit_add.data:
+    #         new_anomaly = Anomaly(
+    #             site_id=site_form.site_code.data,
+    #             start_date=anomaly_form.start_date.data,
+    #             end_date=anomaly_form.end_date.data,
+    #             consumption_value=anomaly_form.consumption_value.data,
+    #             nbr_hour_consumption=anomaly_form.nbr_hour_consumption.data,
+    #             nbr_days_consumption=anomaly_form.nbr_days_consumption.data,
+    #             start_time=anomaly_form.start_time.data,
+    #             impact_consumption=anomaly_form.impact_consumption.data,
+    #             period_type=anomaly_form.period_type.data,
+    #             comments=anomaly_form.comments.data
+    #         )
+    #         session.add(new_anomaly)
+    #         session.commit()
+    #         flash('Anomaly added successfully!', 'success')
+    #     elif anomaly_form.submit_validate.data:
+    #         # Handle validation logic if needed
+    #         pass
+
+    #return render_template('manage_anomalies.html', site_form=site_form, anomaly_form=anomaly_form, anomalies=anomalies)
+    return render_template('analyzer.html', BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate, AnomalyOccurrence=AnomalyOccurrence)     
+
+
+@app.route('/manage_data', methods=['GET', 'POST'])
+@login_required
+def manage_data_page():
+    DataIngestion = DataIngestionForm()
+    DataAvailability = DataAvailabilityForm()
+    
+    if request.method == 'POST':
+        form_type = request.form.get('form_type')
+
+        if form_type == 'data_ingestion' and DataIngestion.validate_on_submit():
+            handle_data_ingestion(DataIngestion)
+            return redirect(url_for('manage_data_page'))
+
+        if form_type == 'data_availability' and DataAvailability.validate_on_submit():
+            handle_data_availability(DataAvailability)
+            return redirect(url_for('manage_data_page'))        
+
+    return render_template('manage_data.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability)
+
+
+@app.route('/visualizer')
+@login_required
+def visualizer_page():
+    return render_template('visualizer.html')
+
 
 def handle_data_ingestion(form):
     sites_from_db = session.query(Site).all()
