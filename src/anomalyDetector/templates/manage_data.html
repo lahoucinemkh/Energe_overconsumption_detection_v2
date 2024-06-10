@@ -14,6 +14,14 @@
         color: white;
     }
 
+    .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        margin-top: 20px; /* Ajout de la marge en haut */
+    }
+
     .functionality-container {
         display: flex;
         width: 100%;
@@ -48,12 +56,15 @@
 </head>
 <body class="text-center">
   <div class="container">
+    <div class="icon-container">
+      <img src="{{ url_for('static', filename='images/manage_data.png') }}" alt="Manage Data Icon" width="120" height="120">
+    </div>
 
     <!-- Data Ingestion -->
     <div class="functionality-container">
       <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Data Ingestion</h1>
-        <p>Utilisez cette section pour ingérer les données dans le système.</p>
+        <p>Import of consumption data in P10 (Pulse every 10 minutes) from Easyvision via the API.</p>
       </div>
       <div class="right-section">
         <form method="POST" class="form-signin">
@@ -72,7 +83,7 @@
     <div class="functionality-container">
       <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Data Availability</h1>
-        <p>Vérifiez la disponibilité des données pour une période donnée.</p>
+        <p>Verification of the availability of consumption data (incorrect data values and data gap).</p>
       </div>
       <div class="right-section">
         <form method="POST" class="form-signin">
@@ -87,9 +98,10 @@
       </div>
     </div>
 
-
   </div>
 </body>
 {% endblock %}
+
+
 
 

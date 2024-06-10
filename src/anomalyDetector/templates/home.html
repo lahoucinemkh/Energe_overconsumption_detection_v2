@@ -1,17 +1,56 @@
 {% extends 'base.html' %}
+
 {% block title %}
-    Welcome to Rawa Services EnergyWatch App
+Welcome to Rawa Services EnergyWatch App
 {% endblock %}
+
 {% block content %}
-    <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center" style="color:white">
-        <img class="mb-4" src="{{ url_for('static', filename='images/Company_Logo_Rawa.png') }}" width="300" height="100" alt="">
-        <div class="col-md-5 p-lg-5 mx-auto my-5">
+<head>
+    <style>
+        .container-home {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            color: white;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 600px; /* Larger than login and register */
+            padding: 15px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .content img {
+            width: 300px;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .content .btn {
+            width: 35%;
+        }
+
+        .product-device, .product-device-2 {
+            display: none;
+        }
+    </style>
+</head>
+<body class="text-center">
+    <div class="container-home">
+        <div class="content">
+            <img src="{{ url_for('static', filename='images/Company_Logo_Rawa.png') }}" alt="Company Logo">
+            <br>
             <h2 class="display-4 font-weight-normal">Rawa Services EnergyWatch App</h2>
+            <br>
             <p class="lead font-weight-normal">Start processing energy data by clicking the link below</p>
+            <br>
             <a class="btn btn-primary" href="{{ url_for('manage_data_page') }}">Get Started</a>
         </div>
-        <div class="product-device box-shadow d-none d-md-block"></div>
-        <div class="product-device product-device-2 box-shadow d-none d-md-block"></div>
     </div>
     <script src="{{ url_for('static', filename='vanilla-tilt.js') }}"></script>
+</body>
 {% endblock %}

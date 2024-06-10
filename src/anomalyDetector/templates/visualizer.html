@@ -5,7 +5,60 @@
 {% endblock %}
 
 {% block content %}
-<h1>
-    The logique of our Visualization
-</h1>
+<div class="container mt-4">
+  <h1 class="mb-4">Visualize Anomalies</h1>
+  
+  <form method="POST">
+      {{ site_form.hidden_tag() }}
+      <div class="form-group">
+          {{ site_form.site_code.label(class="form-label") }}
+          {{ site_form.site_code(class="form-control") }}
+      </div>
+      <div class="form-group">
+          {{ site_form.start_date.label(class="form-label") }}
+          {{ site_form.start_date(class="form-control") }}
+      </div>
+      <div class="form-group">
+          {{ site_form.end_date.label(class="form-label") }}
+          {{ site_form.end_date(class="form-control") }}
+      </div>
+      <div class="form-group">
+          {{ site_form.submit(class="btn btn-primary") }}
+      </div>
+  </form>
+
+  {% if anomalies %}
+      <table class="table table-dark mt-4">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Start Date</th>
+                  <th>End Date</th>
+                  <th>Consumption Value</th>
+                  <th>Number of Hours</th>
+                  <th>Number of Days</th>
+                  <th>Start Time</th>
+                  <th>Impact Consumption</th>
+                  <th>Period Type</th>
+                  <th>Comments</th>
+              </tr>
+          </thead>
+          <tbody>
+              {% for anomaly in anomalies %}
+                  <tr>
+                      <td>{{ anomaly.id }}</td>
+                      <td>{{ anomaly.start_date }}</td>
+                      <td>{{ anomaly.end_date }}</td>
+                      <td>{{ anomaly.consumption_value }}</td>
+                      <td>{{ anomaly.nbr_hour_consumption }}</td>
+                      <td>{{ anomaly.nbr_days_consumption }}</td>
+                      <td>{{ anomaly.start_time }}</td>
+                      <td>{{ anomaly.impact_consumption }}</td>
+                      <td>{{ anomaly.period_type }}</td>
+                      <td>{{ anomaly.comments }}</td>
+                  </tr>
+              {% endfor %}
+          </tbody>
+      </table>
+  {% endif %}
 {% endblock %}

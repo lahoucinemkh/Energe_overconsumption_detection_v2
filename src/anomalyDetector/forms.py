@@ -59,7 +59,7 @@ class UpdateForm(FlaskForm):
         FileRequired(),
         FileAllowed(['xls', 'xlsx'], 'Excel files only!')
     ])
-    submit = SubmitField('Update anomalies')         
+    submit = SubmitField('Upload excel file')         
 
 
 class SiteSelectionForm(FlaskForm):

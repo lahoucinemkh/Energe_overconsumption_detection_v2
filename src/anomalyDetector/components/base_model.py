@@ -396,7 +396,7 @@ class BaseModel:
                     dNbrHeure_list.append("{:.2f}".format(row['Nombre d\'heures regroupées']/6))
                     ddefrence_list.append(int(row['real_consumption']-talon_consommation))
                     dsurconso_identifie.append((int(row['real_consumption'])))
-                    surconso = row['Nombre d\'heures regroupées'] * int(row['real_consumption']-talon_consommation)
+                    surconso = (row['Nombre d\'heures regroupées']/6) * int(row['real_consumption']-talon_consommation)
                     dNbrNuit.append(1)
                     Impact_conso.append(surconso)
 

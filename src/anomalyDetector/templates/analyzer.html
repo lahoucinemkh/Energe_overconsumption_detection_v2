@@ -14,6 +14,14 @@
         color: white;
     }
 
+    .icon-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 20px;
+        margin-top: 20px; /* Ajout de la marge en haut */
+    }
+
     .functionality-container {
         display: flex;
         width: 100%;
@@ -48,12 +56,15 @@
 </head>
 <body class="text-center">
   <div class="container">
+    <div class="icon-container">
+      <img src="{{ url_for('static', filename='images/analyzer.png') }}" alt="Analyzer Icon" width="100" height="100">
+    </div>
 
     <!-- Anomalies Detection -->
     <div class="functionality-container">
       <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Anomalies Detection</h1>
-        <p>Détectez les anomalies dans les données sur une période spécifiée.</p>
+        <p>Auto Detection of anomalies (overconsumptions) of Night and Sunday types.</p>
       </div>
       <div class="right-section">
         <form method="POST" class="form-signin">
@@ -71,8 +82,8 @@
     <!-- Download suivi auto -->
     <div class="functionality-container">
       <div class="left-section">
-        <h1 class="h3 mb-3 font-weight-normal">Download suivi auto</h1>
-        <p>Téléchargez le suivi automatique pour la période sélectionnée.</p>
+        <h1 class="h3 mb-3 font-weight-normal">Download auto analysis</h1>
+        <p>Download overconsumption analysis in excel.</p>
       </div>
       <div class="right-section">
         <form method="POST" class="form-signin">
@@ -91,7 +102,7 @@
     <div class="functionality-container">
       <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Update Anomalies</h1>
-        <p>Mettre à jour les anomalies détectées avec un fichier CSV.</p>
+        <p>Integrate the analysis of anomalies verified by Rawa (Excel file format).</p>
       </div>
       <div class="right-section">
         <form method="POST" enctype="multipart/form-data" class="form-signin">
@@ -112,7 +123,7 @@
     <div class="functionality-container">
       <div class="left-section">
         <h1 class="h3 mb-3 font-weight-normal">Anomaly Occurrence</h1>
-        <p>Affichez les occurrences des anomalies pour la période choisie.</p>
+        <p>Analysis of anomaly occurrences (number of overconsumptions over a chosen period).</p>
       </div>
       <div class="right-section">
         <form method="POST" class="form-signin">

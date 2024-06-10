@@ -93,28 +93,51 @@ def analyzer_page():
             handle_anomaly_occurrence(AnomalyOccurrence)
             return redirect(url_for('analyzer_page'))
 
+    return render_template('analyzer.html', BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate, AnomalyOccurrence=AnomalyOccurrence)     
 
 
-
-    # site_form = SiteSelectionForm()
-    # anomaly_form = AnomalyEditForm()
+@app.route('/manage_data', methods=['GET', 'POST'])
+@login_required
+def manage_data_page():
+    DataIngestion = DataIngestionForm()
+    DataAvailability = DataAvailabilityForm()
     
-    # # Populate site codes for selection
-    # sites = session.query(Site).all()
-    # site_form.site_code.choices = [(site.id, site.site_code) for site in sites]
+    if request.method == 'POST':
+        form_type = request.form.get('form_type')
 
-    # anomalies = []
+        if form_type == 'data_ingestion' and DataIngestion.validate_on_submit():
+            handle_data_ingestion(DataIngestion)
+            return redirect(url_for('manage_data_page'))
+
+        if form_type == 'data_availability' and DataAvailability.validate_on_submit():
+            handle_data_availability(DataAvailability)
+            return redirect(url_for('manage_data_page'))        
+
+    return render_template('manage_data.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability)
+
+
+@app.route('/visualizer', methods=['GET', 'POST'])
+@login_required
+def visualizer_page():
+    site_form = SiteSelectionForm()
+    anomaly_form = AnomalyEditForm()
     
-    # if site_form.validate_on_submit():
-    #     site_id = site_form.site_code.data
-    #     start_date = site_form.start_date.data
-    #     end_date = site_form.end_date.data
+    # Populate site codes for selection
+    sites = session.query(Site).all()
+    site_form.site_code.choices = [(site.id, site.site_code) for site in sites]
 
-    #     anomalies = session.query(Anomaly).filter(
-    #         Anomaly.site_id == site_id,
-    #         Anomaly.start_date >= start_date,
-    #         Anomaly.end_date <= end_date
-    #     ).all()
+    anomalies = []
+    
+    if site_form.validate_on_submit():
+        site_id = site_form.site_code.data
+        start_date = site_form.start_date.data
+        end_date = site_form.end_date.data
+
+        anomalies = session.query(Anomaly).filter(
+            Anomaly.site_id == site_id,
+            Anomaly.start_date >= start_date,
+            Anomaly.end_date <= end_date
+        ).all()
     
     # if anomaly_form.validate_on_submit():
     #     if anomaly_form.submit_edit.data:
@@ -163,34 +186,8 @@ def analyzer_page():
     #         # Handle validation logic if needed
     #         pass
 
-    #return render_template('manage_anomalies.html', site_form=site_form, anomaly_form=anomaly_form, anomalies=anomalies)
-    return render_template('analyzer.html', BaseModel=BaseModel, Download=Download, AnomalyUpdate=AnomalyUpdate, AnomalyOccurrence=AnomalyOccurrence)     
+    return render_template('visualizer.html', site_form=site_form, anomaly_form=anomaly_form, anomalies=anomalies)
 
-
-@app.route('/manage_data', methods=['GET', 'POST'])
-@login_required
-def manage_data_page():
-    DataIngestion = DataIngestionForm()
-    DataAvailability = DataAvailabilityForm()
-    
-    if request.method == 'POST':
-        form_type = request.form.get('form_type')
-
-        if form_type == 'data_ingestion' and DataIngestion.validate_on_submit():
-            handle_data_ingestion(DataIngestion)
-            return redirect(url_for('manage_data_page'))
-
-        if form_type == 'data_availability' and DataAvailability.validate_on_submit():
-            handle_data_availability(DataAvailability)
-            return redirect(url_for('manage_data_page'))        
-
-    return render_template('manage_data.html', DataIngestion=DataIngestion, DataAvailability=DataAvailability)
-
-
-@app.route('/visualizer')
-@login_required
-def visualizer_page():
-    return render_template('visualizer.html')
 
 
 def handle_data_ingestion(form):
@@ -249,21 +246,21 @@ def handle_base_model(form):
         dfer_list.append(site.closing_hour_sun)
         douv_list.append(site.opening_hour_sun)
 
-    for i in range(len(codeRef_list)):
-        site_code = codeRef_list[i]
-        opening_hour_week = ouv_list[i]
-        closing_hour_week = fer_list[i]
-        closing_hour_sun = dfer_list[i]
-        opening_hour_sun = douv_list[i]
-        threshold = tal_list[i]
-        margin = marg[i]
-        id = id_list[i]
-
         STAGE_NAME = "base model"
         try:
             logger.info(f">>>>>> stage {STAGE_NAME} started <<<<<<")
-            prepare_base_model = BaseModelTrainingPipeline(id, start, end, site_code, closing_hour_week, opening_hour_week, threshold, margin, closing_hour_sun, opening_hour_sun)
-            prepare_base_model.main()
+            for i in range(len(codeRef_list)):
+                site_code = codeRef_list[i]
+                opening_hour_week = ouv_list[i]
+                closing_hour_week = fer_list[i]
+                closing_hour_sun = dfer_list[i]
+                opening_hour_sun = douv_list[i]
+                threshold = tal_list[i]
+                margin = marg[i]
+                id = id_list[i]
+
+                prepare_base_model = BaseModelTrainingPipeline(id, start, end, site_code, closing_hour_week, opening_hour_week, threshold, margin, closing_hour_sun, opening_hour_sun)
+                prepare_base_model.main()
             logger.info(f">>>>>> stage {STAGE_NAME} completed <<<<<<\n\nx==========x")
             flash(f"Stage of anomalies detection passed successfully!", category='success')
         except Exception as e:

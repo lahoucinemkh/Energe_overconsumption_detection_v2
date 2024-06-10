@@ -1,26 +1,65 @@
 {% extends 'base.html' %}
+
 {% block title %}
     Login Page
 {% endblock %}
 
 {% block content %}
+<head>
+  <style>
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+        color: white;
+    }
+
+    .form-signin {
+        width: 100%;
+        max-width: 400px;
+        padding: 15px;
+        margin: 0 auto;
+    }
+
+    .form-signin img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-bottom: 20px;
+    }
+
+    .form-signin .form-control {
+        margin-bottom: 10px;
+    }
+
+    .form-signin .btn {
+        width: 100%;
+    }
+
+    .checkbox {
+        text-align: center;
+    }
+  </style>
+</head>
 <body class="text-center">
     <div class="container">
-        <form method="POST" class="form-signin" style="color:white">
+        <form method="POST" class="form-signin">
             {{ form.hidden_tag() }}
-            <img class="mb-4" src="../statics/Company_Logo_Rawa.png" alt="">
-            <h1 class="h3 mb-3 font-weight-normal">
-                Please Login
-            </h1>
+
+            <!-- Image de profil -->
+            <img src="{{ url_for('static', filename='images/profile.png') }}" alt="User Profile Picture">
+
+            <h1 class="h3 mb-3 font-weight-normal">Please Login</h1>
             <br>
+
             {{ form.email_address.label() }}
             {{ form.email_address(class="form-control", placeholder="Email Address") }}
 
             {{ form.password.label() }}
             {{ form.password(class="form-control", placeholder="Password") }}
-
             <br>
-
 
             <div class="checkbox mb-3">
                <h6>Do not have an account?</h6>
@@ -28,7 +67,6 @@
             </div>
 
             {{ form.submit(class="btn btn-lg btn-block btn-primary") }}
-
         </form>
     </div>
 </body>
