@@ -45,14 +45,15 @@ class BaseModel:
 
         id = self.id  
         code = self.site_code    
-        # Définition des heures d'ouverture et de fermeture de l'entreprise
+        
+
         heure_ouverture = self.opening_hour_week
         heure_fermeture = self.closing_hour_week
 
         closing_hour_sun = self.closing_hour_sun
         opening_hour_sun = self.opening_hour_sun
 
-        # Définition du talon de consommation
+        
         talon_consommation = self.threshold
         marg = self.margin
 
@@ -64,7 +65,7 @@ class BaseModel:
             opening_hour_sun = heure_ouverture
 
     
-        # Convertissez le résultat en un DataFrame pandas
+        
         df = pd.read_sql(session.query(Meter).filter(Meter.site_code == code).filter(Meter.date_time >= start).filter(Meter.date_time <= end).statement, session.bind)
         df['date_time'] = pd.to_datetime(df['date_time'])
 

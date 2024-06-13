@@ -15,7 +15,7 @@ class AnomaliesUpload:
         """
         anomalies_to_delete = session.query(Anomaly.id).filter(
             Anomaly.start_date >= self.start_date, 
-            Anomaly.start_date <= self.end_date
+            Anomaly.end_date <= self.end_date
         ).subquery()
 
         session.query(Categorization).filter(Categorization.anomaly_id.in_(anomalies_to_delete)).delete(synchronize_session=False)
