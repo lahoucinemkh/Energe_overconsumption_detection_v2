@@ -14,8 +14,6 @@ from typing import Any
 import base64
 import calendar
 from datetime import datetime
-import pandas as pd
-import numpy as np
 
 
 @ensure_annotations

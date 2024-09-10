@@ -37,8 +37,8 @@ import pandas as pd
 #         logger.exception(e)
 #         raise e  
 
-start = '2024-05-05 00:00:00'
-end = '2024-05-12 23:50:00'
+start = '2024-06-02 00:00:00'
+end = '2024-06-09 23:50:00'
 
 # Convertir en datetime
 start = pd.to_datetime(start)

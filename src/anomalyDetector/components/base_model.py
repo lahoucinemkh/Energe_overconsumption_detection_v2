@@ -64,7 +64,7 @@ class BaseModel:
             closing_hour_sun = heure_fermeture
             opening_hour_sun = heure_ouverture
 
-    
+        end = end + timedelta(days=1) 
         
         df = pd.read_sql(session.query(Meter).filter(Meter.site_code == code).filter(Meter.date_time >= start).filter(Meter.date_time <= end).statement, session.bind)
         df['date_time'] = pd.to_datetime(df['date_time'])
